@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+	<head>
+		<title></title>
+
+		<script type="text/javascript" src="/scripts/main.js"></script>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+
+	</head>
+	<body>
+
+		<h1>WJRH Door</h1>
+
+		<button id="new-dj-button" onclick = "newDJ()">New DJ</button>
+
+		<form action="#" method="GET" onsubmit="" id="new-dj-form" autocomplete="off" class="form-style-4 hidden">
+			<label for="firstname">
+				<span>First Name</span>
+				<input type="text" name="firstname" required="true" />
+			</label>
+			<label for="field2">
+				<span>Last Name</span>
+				<input type="text" name="lastname" required="true" />
+			</label>
+			<label for="field3">
+				<span>Class Year</span>
+				<input type="text" name="communitygroup" required="true" />
+			</label>
+
+			<label for="id">
+				<span>id</span>
+				<input id="id" class="hidden" type="text" name="id" readonly required="true">
+				<input id="loading" class="hidden" type="text" value="Please Scan Your Checkpoint" readonly name="">
+				<input id="scan-button" type="button" value="scan" onclick="scan()"/>
+			</label>
+
+			<label>
+				<span>&nbsp;</span>
+				<input id="form-submit" type="button" value="Submit" />
+			</label>
+		</form>
+
+		<!-- <form id="new-dj" class="hidden">
+			<p>
+				<span>First Name:</span>
+				<input type="text" name="firstname">
+			</p>
+			<p>
+				<span>Last Name:</span> 
+				<input type="text" name="lastname">
+			</p>
+			<span>Graduation Year: <input type="text" name="communitygroup"></span>
+			<input type="submit" name="">
+		</form> -->
+	</body>
+</html>
