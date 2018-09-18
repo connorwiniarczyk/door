@@ -53,6 +53,8 @@ window.onload = function(){
 
 		data.accessgroup = "dj"
 
+		console.log(data)
+
 		fetch("/register", {
 			headers: {
 				"password_hash": "iheartbengordon"

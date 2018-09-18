@@ -3,11 +3,13 @@ var server = require("./server.js")
 var users = require("./users.js")
 var log = require("./log.js")
 
+door.open()
+
 server.on("scan", function(id){
 	users.lookup(id)
 	.then(function(row){
 		console.log(row)
-		if(row.accessgroup == "dj") door.open()
+		if(row[0].accessgroup == "dj" || row[0].accessgroup == "admin") door.open()
 	})
 	.catch(err => console.log(err))
 })

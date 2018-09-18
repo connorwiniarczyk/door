@@ -29,8 +29,8 @@ exports.lookup = function(id) {
 	return new Promise((resolve, reject) => {
 		db.all(sql_commands.LOOK_UP, [id], (err, rows) => {
 			console.log(rows)
-			if(err)	reject(err)
-			else 	resolve(rows)
+			if(err || rows.length == 0)	reject(err)
+			else 						resolve(rows[0])
 		})
 	})
 }

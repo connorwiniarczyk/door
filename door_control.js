@@ -5,6 +5,7 @@ try {
 	var doorCtrl = new io(4, 'out')
 
 	exports.open = function(){
+		console.log("test")
 		doorCtrl.writeSync(1) // set the door control pin to HIGH
 
 		// after 500 ms, call a function that returns the door control pin to LOW
@@ -19,7 +20,6 @@ try {
 		console.log("opening!!!")
 	}
 }
-
 
 // exports.listen = () => (
 // 	new Promise((resolve, reject) => {
