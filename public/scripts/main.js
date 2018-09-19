@@ -50,14 +50,17 @@ window.onload = function(){
 		.forEach(node => data[node.name] = node.value)
 
 		delete data[""]
-
 		data.accessgroup = "dj"
+
+		console.log(data)
 
 		fetch("/register", {
 			headers: {
+			    	'Accept': 'application/json, text/plain, */*',
+			    	'Content-Type': 'application/json',
 				"password_hash": "iheartbengordon"
 			},
-			body: data,
+			body: JSON.stringify(data),
 			method: "POST"
 		})
 		.then(res => res.text())
