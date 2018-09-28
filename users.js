@@ -35,7 +35,10 @@ exports.lookup = function(id) {
 	})
 }
 
+
+
 exports.register = function(data) {
+	console.log(data)
 	return new Promise((resolve, reject) => {
 		db.run(sql_commands.NEW_USER, [
 			data.firstname,
@@ -49,3 +52,11 @@ exports.register = function(data) {
 		})
 	})
 }
+
+exports.register({
+	firstname: "test",
+	lastname: "lastname",
+	accessgroup: "dj",
+	communitygroup: "2020",
+	id: "asdfasdfasdf"
+})

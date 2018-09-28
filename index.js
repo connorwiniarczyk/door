@@ -29,6 +29,8 @@ server.post("/register", function(req, res){
 		return
 	}
 
+	console.log(req.body)
+
 	var data = {
 		firstname: 			req.body.firstname,
 		lastname: 			req.body.lastname,
