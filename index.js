@@ -5,6 +5,9 @@ var log = require("./log.js")
 
 door.open()
 
+// Comment out to disable force_open functionality
+server.on("force_open", () => door.open())
+
 server.on("scan", function(id){
 	users.lookup(id)
 	.then(function(row){

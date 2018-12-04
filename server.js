@@ -34,5 +34,10 @@ app.get("/scanner/next", function(req, res){
 	exports.events.once("scan", id => res.send(id))
 })
 
+app.get("/door/force_open", function(req, res){
+	exports.events.emit("force_open")
+	res.send("opening door")
+})
+
 app.use("/", express.static("public"));
 const server = app.listen(80);

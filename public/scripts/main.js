@@ -58,7 +58,7 @@ window.onload = function(){
 			headers: {
 			    	'Accept': 'application/json, text/plain, */*',
 			    	'Content-Type': 'application/json',
-				"password_hash": "iheartbengordon"
+					"password_hash": "iheartbengordon"
 			},
 			body: JSON.stringify(data),
 			method: "POST"
