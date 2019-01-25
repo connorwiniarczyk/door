@@ -25,7 +25,10 @@ SELECT * FROM users WHERE id=?;
 
 exports.INIT_LOG = `\
 CREATE TABLE IF NOT EXISTS log (
-	message text NOT NULL,
-	
+	message text NOT NULL,	
 );
+`
+
+exports.ALL = `\
+SELECT * FROM users;
 `

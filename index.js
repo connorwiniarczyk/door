@@ -1,49 +1,74 @@
+#!/usr/bin/env node
+
 var door = require("./door_control.js")
-var server = require("./server.js")
 var users = require("./users.js")
 var log = require("./log.js")
 
-door.open()
+// the two main parts of our interface, one handles input via http, and the other
+// (cli) takes input from the command line
+const http = require("./interface/http_interface.js")
+const cli = require("./interface/cli_interface.js")
 
-// Comment out to disable force_open functionality
-server.on("force_open", () => door.open())
+// build the event handler that our interfaces will use
+const events = require('events')
+const interface = new events()
 
-server.on("scan", function(id){
-	users.lookup(id)
-	.then(function(row){
-		console.log(row)
-		if(row[0].accessgroup == "dj" || row[0].accessgroup == "admin") door.open()
-	})
-	.catch(err => console.log(err))
+//-------------------------------------
+//		Handle Input Events
+//-------------------------------------
+
+interface.on('open_door', function(){
+	door.open()
 })
 
-server.on("register", data => users.register(data))
-
-server.get("/users/get", function(req, res){
-	users.lookup(req.query.id)
-	.then(rows => res.send(rows))
-	.catch(err => res.send(err))
+// fetch a list of all the users and pass it back
+// to the interface so it can display the output
+interface.on('list_users', async function(callback){
+	const result = await users.all()
+	callback(result)
 })
 
-// register a new user
-server.post("/register", function(req, res){
-	if(! server.authenticate(req.headers)) {
-		res.send("failure, password incorrect")
-		return
-	}
+cli.listen(interface)
 
-	console.log(req.body)
+// // Comment out to disable force_open functionality
+// server.on("force_open", () => door.open())
 
-	var data = {
-		firstname: 			req.body.firstname,
-		lastname: 			req.body.lastname,
-		middlename: 		req.body.middlename,
-		communitygroup: 	req.body.communitygroup,
-		accessgroup: 		req.body.accessgroup,
-		id: 				req.body.id
-	}
+// server.on("scan", function(id){
+// 	users.lookup(id)
+// 	.then(function(row){
+// 		console.log(row)
+// 		if(row[0].accessgroup == "dj" || row[0].accessgroup == "admin") door.open()
+// 	})
+// 	.catch(err => console.log(err))
+// })
 
-	users.register(data)
-	.then(() => res.send("success"))
-	.catch(err => res.send(err))
-})
+// server.on("register", data => users.register(data))
+
+// server.get("/users/get", function(req, res){
+// 	users.lookup(req.query.id)
+// 	.then(rows => res.send(rows))
+// 	.catch(err => res.send(err))
+// })
+
+// // register a new user
+// server.post("/register", function(req, res){
+// 	if(! server.authenticate(req.headers)) {
+// 		res.send("failure, password incorrect")
+// 		return
+// 	}
+
+// 	console.log(req.body)
+
+// 	var data = {
+// 		firstname: 			req.body.firstname,
+// 		lastname: 			req.body.lastname,
+// 		middlename: 		req.body.middlename,
+// 		communitygroup: 	req.body.communitygroup,
+// 		accessgroup: 		req.body.accessgroup,
+// 		id: 				req.body.id
+// 	}
+
+// 	users.register(data)
+// 	.then(() => res.send("success"))
+// 	.catch(err => res.send(err))
+// })

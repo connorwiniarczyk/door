@@ -1,11 +1,16 @@
-var fs = require("fs")
-var db = require("sqlite3")
-var commands = require("./sql_commands.js")
+const bunyan = require('bunyan')
+const prettyStream = require('bunyan-prettystream')
 
-var path = "./public/log.txt"
+const out_pretty = new prettyStream
+out_pretty.pipe(process.stdout)
 
-module.exports = function(data){
+const log = bunyan.createLogger({
+	name: "door",
+	streams: [{
+		level: 'debug',
+		type: 'raw',
+		stream: out_pretty
+	}]
+})
 
-}
-
-console.log(commands.INIT_USERS)
+module.exports = log

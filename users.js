@@ -1,26 +1,66 @@
-var sqlite = require("sqlite3")
-var db = new sqlite.Database("./door.db")
+const log = require('./log.js')
+var db // the database
+
+try { 
+	sqlite = require("sqlite3")
+	db = new sqlite.Database("./door.db")
+} catch(err) {
+	db = null
+}
+
+if(db)	log.info('user database registered successfully')
+else	log.warn('could not register database')
 
 const SQL = require("./sql_commands.js");
 
-// const sql_commands = {
-// 	INIT:`	CREATE TABLE IF NOT EXISTS users (
-// 				firstname text NOT NULL, 
-// 				middlename text, 
-// 				lastname text NOT NULL, 
-// 				communitygroup text NOT NULL, 
-// 				accessgroup text NOT NULL,
-// 				id text PRIMARY KEY
-// 			);`,
-// 	NEW_USER:`INSERT INTO users 
-// 	(firstname, lastname, communitygroup, accessgroup, id) 
-// 	VALUES(?, ?, ?, ?, ?);`,
+//wrap sqlite commands in a Promise API for ease of use
+sql_run = function(method, args){
+	// make sure that SQL is enabled
+	if(db == null) {
+		return // do not execute the rest of the function
+	}
 
-// 	CLEAR_ALL: `DELETE FROM users WHERE 1;`,
+	return new Promise((resolve, reject) => {
+		db.all(method, args, function(err, rows){
+			if(err) reject(err.message)
+			else 	resolve(rows)
+		})
+	})
+}
 
-// 	LOOK_UP: `SELECT * FROM users WHERE id=?;`
-// }
+// expose some methods
+exports.lookup = async function(id) {
+	const result = await sql_run(SQL.LOOK_UP, [id])
+	console.log(result)
+	return result
+}
 
+exports.register = async function(data) {
+	const args = [
+		data.firstname,
+		data.lastname,
+		data.communitygroup,
+		data.accessgroup,
+		data.id,
+	]
+
+	await sql_run(SQL.NEW_USER, args)
+}
+
+exports.all = async function(){
+	return await sql_run(SQL.ALL, [])
+}
+
+// exports.register({
+// 	firstname: "hello",
+// 	lastname: "hello",
+// 	communitygroup: "DJ",
+// 	accessgroup: "IDK",
+// 	id: "b67asdm",
+// })
+// .catch(err => console.log(err))
+
+exports.all()
 
 // COMMENTED OUT FOR SAFETY
 // -------------------------
@@ -28,39 +68,28 @@ const SQL = require("./sql_commands.js");
 // 	db.run(SQL.CLEAR_ALL)
 // }
 
-exports.lookup = function(id) {
-	return new Promise((resolve, reject) => {
-		db.all(SQL.LOOK_UP, [id], (err, rows) => {
-			console.log(rows)
-			if(err || rows.length == 0)	reject(err)
-			else 						resolve(rows[0])
-		})
-	})
-}
+// exports.lookup = function(id) {
+// 	return new Promise((resolve, reject) => {
+// 		db.all(SQL.LOOK_UP, [id], (err, rows) => {
+// 			console.log(rows)
+// 			if(err || rows.length == 0)	reject(err)
+// 			else 						resolve(rows[0])
+// 		})
+// 	})
+// }
 
-exports.register = function(data) {
-	console.log(data)
-	return new Promise((resolve, reject) => {
-		db.run(SQL.NEW_USER, [
-			data.firstname,
-			data.lastname,
-			data.communitygroup,
-			data.accessgroup,
-			data.id
-		], function(err){
-			if(err)	reject(err)
-			else	resolve()
-		})
-	})
-}
-
-// exports.register({
-// 	firstname: "test", 
-// 	lastname: "test", 
-// 	communitygroup: "test",
-// 	accessgroup: "test",
-// 	id: "b26d79b0",
-// })
-
-exports.lookup("b26d79b0")
-.then(body => console.log(body))
+// exports.register = function(data) {
+// 	console.log(data)
+// 	return new Promise((resolve, reject) => {
+// 		db.run(SQL.NEW_USER, [
+// 			data.firstname,
+// 			data.lastname,
+// 			data.communitygroup,
+// 			data.accessgroup,
+// 			data.id
+// 		], function(err){
+// 			if(err)	reject(err)
+// 			else	resolve()
+// 		})
+// 	})
+// }

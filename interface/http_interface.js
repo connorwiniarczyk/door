@@ -11,6 +11,8 @@ exports.on = exports.events.on.bind(exports.events)
 exports.get = app.get.bind(app)
 exports.post = app.post.bind(app)
 
+exports.listen = app.listen
+
 var bodyParser = require("body-parser")
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -40,4 +42,4 @@ app.get("/door/force_open", function(req, res){
 })
 
 app.use("/", express.static("public"));
-const server = app.listen(80);
+// const server = app.listen(8000);
