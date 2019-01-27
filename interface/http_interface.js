@@ -1,10 +1,25 @@
 var express = require("express")
 var app = express()
 var http = require("http").Server(app)
-
+const fetch = require('node-fetch')
 const log = require('../log.js')
-
 var path = require("path")
+
+const remote_url = "http://45.55.38.183:4002/log"
+
+// continuously let the monitor server know that we are still alive
+const heartbeat = async function(){
+	fetch(remote_url, {
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		method: "POST",
+		body: JSON.stringify({ event: "HEARTBEAT", data: "", sender: "DOOR" })
+	})
+	.then(() => setTimeout(heartbeat, 1000))
+	.catch(() => console.log("Could not connect to remote"))
+}
 
 exports.listen = function(program, port){
 	var bodyParser = require("body-parser")
@@ -28,7 +43,7 @@ exports.listen = function(program, port){
 	app.listen(port)
 	log.info(`listening on port ${port}`)
 
-	// log.begin_heartbeat()
+	heartbeat()
 }
 
 // // interface used by the scanner to communicate scanned id's with server

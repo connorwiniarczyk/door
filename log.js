@@ -8,7 +8,7 @@ const out_pretty = new prettyStream
 out_pretty.pipe(process.stdout)
 
 // const remote_url = 'http://45.55.38.183:4002/log'
-const remote_url = "http://localhost:4002/log"
+const remote_url = "http://45.55.38.183:4002/log"
 
 const remote = new stream.Writable({
 	write: async function(chunk, encoding, next){
@@ -19,7 +19,7 @@ const remote = new stream.Writable({
 			},
 			method: "POST",
 			body: JSON.stringify({ event: "LOG", data: chunk.toString('utf8'), sender: "DOOR" })
-		})
+		}).catch(err => {})
 		next()
 	}
 })
@@ -39,20 +39,5 @@ const log = bunyan.createLogger({
 	}
 	]
 })
-
-const heartbeat = async function(){
-	fetch(remote_url, {
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		method: "POST",
-		body: JSON.stringify({ event: "HEARTBEAT", data: "", sender: "DOOR" })
-	}).catch(() => {})
-
-	setTimeout(heartbeat, 1000)
-}
-
-heartbeat()
 
 module.exports = log
