@@ -40,6 +40,10 @@ interface.on('begin_server', function(port){
 	http.listen(interface, port)
 })
 
+interface.on('scan', async function(id){
+	const { studio_door } = await users.get_permissions(id)
+})
+
 cli.listen(interface)
 
 // // Comment out to disable force_open functionality

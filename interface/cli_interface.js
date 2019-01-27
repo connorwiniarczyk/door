@@ -33,6 +33,12 @@ exports.listen = function(program){
 		program.emit('begin_server', port)
 	})
 
+	cli
+	.command('mock-scan')
+	.action(async function(cmd){
+		program.emit('scan', cmd)
+	})
+
 	cli.parse(process.argv)
 }
 

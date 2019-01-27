@@ -1,6 +1,12 @@
 const log = require('./log.js')
 var db // the database
 
+const to = function(promise){
+	return promise
+	.then(res => [null, res])
+	.catch(err => [err])
+}
+
 try { 
 	sqlite = require("sqlite3")
 	db = new sqlite.Database("./door.db")
@@ -30,8 +36,13 @@ sql_run = function(method, args){
 
 // expose some methods
 exports.lookup = async function(id) {
-	const result = await sql_run(SQL.LOOK_UP, [id])
-	console.log(result)
+	const [err, result] = await to(sql_run(SQL.LOOK_UP, [id]))
+
+	if(err) {
+		log.error(`Invalid SQL syntax in lookup: ${err.message}`)
+		throw err
+	}
+
 	return result
 }
 
@@ -49,6 +60,33 @@ exports.register = async function(data) {
 
 exports.all = async function(){
 	return await sql_run(SQL.ALL, [])
+}
+
+exports.get_permissions = async function(id){
+	let output = {}
+	const [err, result] = await to(exports.lookup(id))
+
+	if(err) {
+		log.error(`No permissions found for ${id}: Invalid SQL`)
+		return {} // no permissions
+	}
+
+	if(result.length < 1) {
+		log.info(`No permissions found for ${id}: Could not find in database`)
+		return {} // no permissions
+	}
+
+	const user = result[0]
+	const { accessgroup } = user
+
+	if(accessgroup == 'dj' || accessgroup =='admin') {
+		output.studio_door = true
+	} else {
+		log.info(`Access Denied for user: ${user.firstname} ${user.lastname}. Not permitted to open studio door`)
+		output.studio_door = false
+	}
+
+	return output
 }
 
 // exports.register({
