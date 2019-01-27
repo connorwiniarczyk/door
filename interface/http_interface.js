@@ -27,6 +27,8 @@ exports.listen = function(program, port){
 
 	app.listen(port)
 	log.info(`listening on port ${port}`)
+
+	// log.begin_heartbeat()
 }
 
 // // interface used by the scanner to communicate scanned id's with server

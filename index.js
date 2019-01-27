@@ -42,6 +42,10 @@ interface.on('begin_server', function(port){
 
 interface.on('scan', async function(id){
 	const { studio_door } = await users.get_permissions(id)
+	if(studio_door) {
+		log.info('Success, opening studio door')
+		door.open()
+	}
 })
 
 cli.listen(interface)

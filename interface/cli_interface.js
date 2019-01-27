@@ -7,6 +7,7 @@ exports.listen = function(program){
 	cli
 	.version('1.0.0')
 	.command('list') // display a list of users
+	.description('list the users currently in the database')
 	.action(async function(){
 		program.emit('list_users', function(result){
 			result.forEach(row => {
@@ -27,6 +28,7 @@ exports.listen = function(program){
 
 	cli
 	.command('begin')
+	.description('start the web server on the specified port')
 	.option('-p, --port [port]', 'Specify the port to run the server on [80]', '80')
 	.action(async function(cmd){
 		const port = parseInt(cmd.port)
@@ -35,6 +37,7 @@ exports.listen = function(program){
 
 	cli
 	.command('mock-scan')
+	.description('type in an id string to test functionality')
 	.action(async function(cmd){
 		program.emit('scan', cmd)
 	})
