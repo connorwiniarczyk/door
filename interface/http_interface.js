@@ -2,44 +2,48 @@ var express = require("express")
 var app = express()
 var http = require("http").Server(app)
 
+const log = require('../log.js')
+
 var path = require("path")
-var events = require("events")
 
-exports.events = new events()
-exports.on = exports.events.on.bind(exports.events)
+exports.listen = function(program, port){
+	var bodyParser = require("body-parser")
+	app.use(bodyParser.json()); // support json encoded bodies
+	app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-exports.get = app.get.bind(app)
-exports.post = app.post.bind(app)
+	app.get("/", function(req, res){
+		res.sendFile( path.join(__dirname, "public/index.html") );
+	});
 
-exports.listen = app.listen
+	app.get("/esp", function(req, res){
+		program.emit('scan', req.query.id)
+		res.send('success')
+	})
 
-var bodyParser = require("body-parser")
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+	app.get("/scanner/next", async function(req, res){
+		const scan = await program.next('scan')
+		res.send(scan)
+	})
 
-exports.authenticate = function(headers){
-	return headers.password_hash == "iheartbengordon"
+	app.listen(port)
+	log.info(`listening on port ${port}`)
 }
 
-app.get("/", function(req, res){
-	res.sendFile( path.join(__dirname, "public/index.html") );
-});
+// // interface used by the scanner to communicate scanned id's with server
+// app.get("/esp", function(req, res){
+// 	exports.events.emit("scan", req.query.id)
+// 	res.send("success")
+// })
 
-// interface used by the scanner to communicate scanned id's with server
-app.get("/esp", function(req, res){
-	exports.events.emit("scan", req.query.id)
-	res.send("success")
-})
+// // wait until the next device is scanned and send it's id
+// app.get("/scanner/next", function(req, res){
+// 	exports.events.once("scan", id => res.send(id))
+// })
 
-// wait until the next device is scanned and send it's id
-app.get("/scanner/next", function(req, res){
-	exports.events.once("scan", id => res.send(id))
-})
-
-app.get("/door/force_open", function(req, res){
-	exports.events.emit("force_open")
-	res.send("opening door")
-})
+// app.get("/door/force_open", function(req, res){
+// 	exports.events.emit("force_open")
+// 	res.send("opening door")
+// })
 
 app.use("/", express.static("public"));
 // const server = app.listen(8000);

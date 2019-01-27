@@ -13,8 +13,16 @@ const cli = require("./interface/cli_interface.js")
 const events = require('events')
 const interface = new events()
 
+events.prototype.next = function(event){
+	return new Promise(function(resolve, reject){
+		events.once(event, function(args){
+			resolve(args)
+		})
+	})
+}
+
 //-------------------------------------
-//		Handle Input Events
+//	Handle Input Events
 //-------------------------------------
 
 interface.on('open_door', function(){
@@ -26,6 +34,10 @@ interface.on('open_door', function(){
 interface.on('list_users', async function(callback){
 	const result = await users.all()
 	callback(result)
+})
+
+interface.on('begin_server', function(port){
+	http.listen(interface, port)
 })
 
 cli.listen(interface)

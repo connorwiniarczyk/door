@@ -20,8 +20,8 @@ exports.listen = function(program){
 
 	cli
 	.command('open')
+	.description('opens the door')
 	.action(async function(){
-		// tell the program to open the door
 		program.emit('open_door')
 	})
 
@@ -30,7 +30,7 @@ exports.listen = function(program){
 	.option('-p, --port [port]', 'Specify the port to run the server on [80]', '80')
 	.action(async function(cmd){
 		const port = parseInt(cmd.port)
-		// server.listen(8000)
+		program.emit('begin_server', port)
 	})
 
 	cli.parse(process.argv)
