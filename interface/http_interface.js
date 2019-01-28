@@ -5,11 +5,12 @@ const fetch = require('node-fetch')
 const log = require('../log.js')
 var path = require("path")
 
-const remote_url = "http://45.55.38.183:4002/log"
+// const remote_url = "http://45.55.38.183:4002/log"
+const watchdog_url = "http://45.55.38.183:4002/log"
 
 // continuously let the monitor server know that we are still alive
 const heartbeat = async function(){
-	fetch(remote_url, {
+	fetch(watchdog_url, {
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json'
