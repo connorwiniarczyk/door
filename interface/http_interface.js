@@ -5,6 +5,10 @@ const fetch = require('node-fetch')
 const log = require('../log.js')
 var path = require("path")
 
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
+
 // const remote_url = "http://45.55.38.183:4002/log"
 const watchdog_url = "http://45.55.38.183:4002/log"
 
@@ -39,6 +43,10 @@ exports.listen = function(program, port){
 	app.get("/scanner/next", async function(req, res){
 		const scan = await program.next('scan')
 		res.send(scan)
+	})
+
+	app.post("/register", async function(req, res){
+		program.emit('register', req.body)
 	})
 
 	app.listen(port)

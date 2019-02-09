@@ -15,7 +15,7 @@ const interface = new events()
 
 events.prototype.next = function(event){
 	return new Promise(function(resolve, reject){
-		events.once(event, function(args){
+		interface.once(event, function(args){
 			resolve(args)
 		})
 	})
@@ -41,11 +41,17 @@ interface.on('begin_server', function(port){
 })
 
 interface.on('scan', async function(id){
+	log.info(`scan: ${id}`)
 	const { studio_door } = await users.get_permissions(id)
+	
 	if(studio_door) {
 		log.info('Success, opening studio door')
 		door.open()
 	}
+})
+
+interface.on('register', function(data){
+	console.log(data)
 })
 
 cli.listen(interface)

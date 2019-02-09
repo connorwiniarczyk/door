@@ -1,11 +1,33 @@
+const { to } = require('utils')
 const log = require('./log.js')
+
 var db // the database
 
-const to = function(promise){
-	return promise
-	.then(res => [null, res])
-	.catch(err => [err])
+const request = function(module){
+	const output = new Promise(function(resolve, reject){
+		try {
+			const result = require(module)
+			resolve(result)
+		} catch(err) {
+			reject(new Error(`Could not register module: ${module}`))
+		}
+	})
+
+	return to(output)
 }
+
+exports.init = async function(){
+	const [err, sqlite] = await request('sqlite3')
+
+	if(err) {
+		log.error(err.message)
+		return
+	} else {
+		log.info('registered module')
+	}
+}
+
+exports.init()
 
 try { 
 	sqlite = require("sqlite3")

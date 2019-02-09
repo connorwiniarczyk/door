@@ -1,5 +1,38 @@
 const log = require('./log.js')
+const { to } = require('utils')
 let io;
+
+const request = function(module){
+	const output = new Promise(function(resolve, reject){
+		try {
+			const result = require(module)
+			resolve(result)
+		} catch(err) {
+			reject(new Error(`Could not register module: ${module}`))
+		}
+	})
+
+	return to(output)
+}
+
+exports.init = async function(){
+	[ err, onoff ] = await request('onoff')
+
+	if(err){
+		log.warn(err.message)
+		exports.open = function(){
+			log.info('open door called, but no gpio module is registered')
+		}
+
+		return
+	}
+
+	const io = onoff.Gpio
+
+	exports.open = function(){
+		
+	}
+}
 
 try {
 	io = require("onoff").Gpio
