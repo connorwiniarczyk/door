@@ -46,7 +46,9 @@ exports.listen = function(program, port){
 	})
 
 	app.post("/register", async function(req, res){
-		program.emit('register', req.body)
+		program.emit('register', req.body, function(result){
+			res.send(result)
+		})
 	})
 
 	app.listen(port)

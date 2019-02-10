@@ -13,6 +13,8 @@ const cli = require("./interface/cli_interface.js")
 const events = require('events')
 const interface = new events()
 
+const { to } = require('utils')
+
 events.prototype.next = function(event){
 	return new Promise(function(resolve, reject){
 		interface.once(event, function(args){
@@ -50,8 +52,16 @@ interface.on('scan', async function(id){
 	}
 })
 
-interface.on('register', function(data){
+interface.on('register', async function(data, callback){
 	console.log(data)
+
+	const [err, res] = await to(users.register(data))
+
+	if(err) {
+		callback(err)
+	} else {
+		callback("SUCCESS")
+	}
 })
 
 cli.listen(interface)
