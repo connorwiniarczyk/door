@@ -31,7 +31,7 @@ exports.init()
 
 try { 
 	sqlite = require("sqlite3")
-	db = new sqlite.Database("./door.db")
+	db = new sqlite.Database("./users.db")
 } catch(err) {
 	db = null
 }
