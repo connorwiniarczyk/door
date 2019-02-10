@@ -9,7 +9,6 @@ const bodyParser = require('body-parser')
 
 app.use(bodyParser.json())
 
-// const remote_url = "http://45.55.38.183:4002/log"
 const watchdog_url = "http://45.55.38.183:4002/log"
 
 // continuously let the monitor server know that we are still alive
@@ -32,8 +31,10 @@ exports.listen = function(program, port){
 	app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 	app.get("/", function(req, res){
-		res.sendFile( path.join(__dirname, "public/index.html") );
+		res.sendFile( path.join(__dirname, "frontend/index.html") );
 	});
+
+	app.use("/", express.static("interface/frontend"));
 
 	app.get("/esp", function(req, res){
 		program.emit('scan', req.query.id)
@@ -57,12 +58,6 @@ exports.listen = function(program, port){
 	heartbeat()
 }
 
-// // interface used by the scanner to communicate scanned id's with server
-// app.get("/esp", function(req, res){
-// 	exports.events.emit("scan", req.query.id)
-// 	res.send("success")
-// })
-
 // // wait until the next device is scanned and send it's id
 // app.get("/scanner/next", function(req, res){
 // 	exports.events.once("scan", id => res.send(id))
@@ -72,6 +67,3 @@ exports.listen = function(program, port){
 // 	exports.events.emit("force_open")
 // 	res.send("opening door")
 // })
-
-app.use("/", express.static("public"));
-// const server = app.listen(8000);

@@ -17,6 +17,7 @@
     "express": "^4.16.4",
     "gpio": "^0.2.9",
     "node-fetch": "^2.3.0",
+    "readline-promise": "^1.0.3",
     "utils": "git+https://github.com/connorwiniarczyk/utils-js.git"
   },
   "optionalDependencies": {
