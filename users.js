@@ -105,11 +105,12 @@ exports.get_permissions = async function(id){
 	// TODO: remove this line when it gets tired
 	if(user.firstname == 'Neil' && user.lastname == 'McEnerney'){
 		groupme.post(`\
-			Attention: @Neil McEnerney has just entered the station.
-			This message is to remind him of who wrote the software controlling the door he just used\
-			and of the name of the current cheif engineer
+Attention: @Neil McEnerney has just entered the station.
 
-			 -- Connor <3 \
+This message is to remind him of who wrote the software controlling the door he just used
+and of the name of the current chief engineer
+
+	<3 Connor\
 		`)
 	}
 
