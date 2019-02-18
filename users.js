@@ -1,5 +1,6 @@
 const { to } = require('utils')
 const log = require('./log.js')
+const groupme = require('./groupme.js')
 
 var db // the database
 
@@ -99,6 +100,19 @@ exports.get_permissions = async function(id){
 	}
 
 	const user = result[0]
+
+	// Hazing Neil
+	// TODO: remove this line when it gets tired
+	if(user.firstname == 'Neil' && user.lastname == 'McEnerney'){
+		groupme.post(`\
+			Attention: @Neil McEnerney has just entered the station.
+			This message is to remind him of who wrote the software controlling the door he just used\
+			and of the name of the current cheif engineer
+
+			 -- Connor <3 \
+		`)
+	}
+
 	const { accessgroup } = user
 
 	if(accessgroup == 'dj' || accessgroup =='admin') {
