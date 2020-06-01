@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import redis
 import time
 
@@ -9,14 +11,15 @@ stream = data.pubsub()
 stream.subscribe('door-commands')
 
 def open(duration=1):
-	print('opening')
-	pass
+	data.publish('info', 'opening door')
+	time.sleep(duration)
+	data.publish('info', 'closing door')
 
 def hold():
-	pass
+	data.publish('info', 'holding door')
 
 def close():
-	pass
+	data.publish('info', 'closing door')
 
 command_list = {
 	'open': open,
@@ -28,7 +31,7 @@ while True:
 	message = stream.get_message()
 	if message:
 		command = message['data']
-		default = lambda : print('command not recognized')
+		default = lambda : data.publish('info', 'command not recognized: {}'.format(command))
 		function = command_list.get(command, default)
 		function()
 	else:

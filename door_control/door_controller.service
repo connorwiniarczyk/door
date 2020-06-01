@@ -1,0 +1,9 @@
+[Service]
+WorkingDirectory=/usr/etc/door
+ExecStart=/usr/bin/door_controller.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=door_controller
+User=root
+Group=root
