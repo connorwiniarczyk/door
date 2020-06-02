@@ -1,8 +1,9 @@
-# access control server
+#!/usr/bin/python3
 
 import redis
 import time
 import psycopg2 as postgres
+import json
 
 db = postgres.connect(
 	user='wjrh',
@@ -11,8 +12,6 @@ db = postgres.connect(
 	port='5432',
 	database='wjrh'
 )
-
-print('test')
 
 # setup the database
 cursor = db.cursor()
@@ -31,27 +30,37 @@ db.commit()
 
 data = redis.Redis(host='localhost', port=6379, decode_responses=True)
 stream = data.pubsub()
-stream.subscribe('access-commands')
+stream.subscribe('register')
 
 def request_access(key):
 	pass
 
-def register(key, firstname=None, lastname=None, role=None, year=None):
-	cursor.execute("""
-		INSERT INTO users (
-			key, firstname, lastname, role, class	
-		)VALUES(
-			%s, %s, %s, %s, %s	
-		)	
-	""", [key, firstname, lastname, role, year])
+def register(user_info):
+	key = user_info.get('key', None)
+	firstname = user_info.get('firstname', None)
+	lastname = user_info.get('lastname', None)
+	role = user_info.get('role', None)
+	class_year = user_info.get('class', None)
 
-	db.commit()
+	try:
+		cursor.execute("""
+			INSERT INTO users (
+				key, firstname, lastname, role, class	
+			)VALUES(
+				%s, %s, %s, %s, %s	
+			)	
+		""", [key, firstname, lastname, role, class_year])
 
-register('asdf')
+		db.commit()
+		data.publish('info', 'registered user')
+	except Exception as error:
+		print('database error')
+		data.publish('info', 'database error: {}'.format(error))
 
-#while True:
-#	message = stream.get_message()
-#	if message:
-#		command = message['data']
-#	else:
-#		time.sleep(0.1)
+while True:
+	message = stream.get_message()
+	if message and message.get('type') == 'message':
+		message_data = message['data']
+		register(json.loads(message_data))
+	else:
+		time.sleep(0.1)

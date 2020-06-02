@@ -1,0 +1,9 @@
+[Service]
+WorkingDirectory=/usr/etc/door
+ExecStart=/usr/bin/access_control.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=access_control
+User=root
+Group=root

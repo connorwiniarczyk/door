@@ -10,6 +10,7 @@ pip3 install psycopg2
 chmod +x install
 chmod +x door_cli.py
 chmod +x door_control/door_controller.py
+chmod +x access_control/access_control.py
 
 cp door_cli.py /usr/bin/door
 chmod +x /usr/bin/door
@@ -17,6 +18,12 @@ chmod +x /usr/bin/door
 mkdir -p /usr/etc/door
 
 cp door_control/door_controller.py /usr/bin
+cp access_control/access_control.py /usr/bin
+
 cp door_control/door_controller.service /etc/systemd/system
+cp access_control/access_control.service /etc/systemd/system
 
 systemctl start door_controller
+systemctl start access_control
+
+systemctl daemon-reload

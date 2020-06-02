@@ -2,6 +2,7 @@
 import redis
 import argparse
 import time
+import json
 
 # configure redis
 data = redis.Redis(host='localhost', port=6379, decode_responses=True)
@@ -27,7 +28,8 @@ parser = argparse.ArgumentParser(description='door')
 subparsers = parser.add_subparsers(help='sub-command help')
 
 # open
-def open(duration=1):
+def open(arguments):
+	print(arguments)
 	data.publish('door-commands', 'open')
 	result = wait_for_message()
 	print(result.get('data'))
@@ -57,6 +59,21 @@ def close(duration=1):
 
 parser_close = subparsers.add_parser('close', help='close the door')
 parser_close.set_defaults(func=close)
+
+def register(args):
+	values = {}
+	values['firstname'] = input('First Name: ')
+	values['lastname'] = input('Last Name: ')
+	values['class']  = input('Class: ')
+	values['key'] = input('key: ')
+
+	data.publish('register', json.dumps(values))
+
+	print(wait_for_message())
+
+
+parser_register = subparsers.add_parser('register')
+parser_register.set_defaults(func=register)
 
 args = parser.parse_args()
 args.func(args)
