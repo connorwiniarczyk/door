@@ -31,9 +31,20 @@ db.commit()
 data = redis.Redis(host='localhost', port=6379, decode_responses=True)
 stream = data.pubsub()
 stream.subscribe('register')
+stream.subscribe('scan')
 
 def request_access(key):
-	pass
+	cursor.execute("""
+		SELECT * FROM users WHERE key = %s
+	""", [key])
+
+	result = cursor.fetchall()
+
+	if len(result) == 1:
+		data.publish('info', 'success, opening door')
+		data.publish('door-commands', 'open')
+	else:
+		data.publish('info', 'failure, key not in system')
 
 def register(user_info):
 	key = user_info.get('key', None)
@@ -60,7 +71,11 @@ def register(user_info):
 while True:
 	message = stream.get_message()
 	if message and message.get('type') == 'message':
-		message_data = message['data']
-		register(json.loads(message_data))
+
+		if message.get('channel') == 'register':
+			register(json.loads(message.get('data')))
+		elif message.get('channel') == 'scan':
+			request_access(message.get('data'))
+
 	else:
 		time.sleep(0.1)

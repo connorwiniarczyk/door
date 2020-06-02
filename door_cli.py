@@ -75,5 +75,14 @@ def register(args):
 parser_register = subparsers.add_parser('register')
 parser_register.set_defaults(func=register)
 
+def request_access(args):
+	key = vars(args).get('key')
+	data.publish('scan', key)
+	print(wait_for_message())
+
+parser_scan = subparsers.add_parser('scan')
+parser_scan.add_argument('key')
+parser_scan.set_defaults(func=request_access)
+
 args = parser.parse_args()
 args.func(args)

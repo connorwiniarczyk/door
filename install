@@ -26,4 +26,7 @@ cp access_control/access_control.service /etc/systemd/system
 systemctl start door_controller
 systemctl start access_control
 
+systemctl restart door_controller
+systemctl restart access_control
+
 systemctl daemon-reload
