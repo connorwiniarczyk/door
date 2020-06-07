@@ -3,6 +3,21 @@
 import redis
 import time
 
+import logging
+import logging_loki
+
+handler = logging_loki.LokiHandler(
+	url='10.8.0.15',
+	tags={"application", "door-controller"},
+)
+
+logger = logging.getLogger('my-logger')
+logger.addHandler(handler)
+
+logger.error('service started',
+	extra={"tags": {"service": "my-service"}}
+)
+
 #import RPi.GPIO as gpio
 #gpio.setmode(gpio.BCM)
 

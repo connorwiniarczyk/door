@@ -5,6 +5,9 @@ import time
 import psycopg2 as postgres
 import json
 
+import logging
+import logging_loki
+
 db = postgres.connect(
 	user='wjrh',
 	password='hogghall',
